@@ -78,20 +78,20 @@ class Tableau1 extends Phaser.Scene {
             switch (kevent.keyCode)
             {
                 case Phaser.Input.Keyboard.KeyCodes.D:
-                    me.player.setVelocityX(200);
+                    me.player.setVelocityX(500);
                     if (me.player.body.onFloor()) {
                         me.player.play('walk', true);
                     }
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Q:
-                    me.player.setVelocityX(-200);
+                    me.player.setVelocityX(-500);
                     if (me.player.body.onFloor()) {
                     me.player.play('walk', true);
                     }
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                     if (me.player.body.onFloor()) {
-                        me.player.setVelocityY(-1000);
+                        me.player.setVelocityY(-1200);
                         me.player.play('jump', true);
                     }
                     break;
@@ -127,6 +127,8 @@ class Tableau1 extends Phaser.Scene {
         } else if (this.player.body.velocity.x < 0) {
             // otherwise, make them face the other side
             this.player.setFlipX(true);
+        } else if (this.player.body.velocity.x === 0 && this.player.body.onFloor()) {
+            this.player.play('idle', true);
         }
     }
 
