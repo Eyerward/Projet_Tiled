@@ -7,8 +7,8 @@ let gameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 2500},
-            debug: true,
+            gravity: {y: 2000},
+            debug: false,
         },
     },
     scene: new Tableau1()
