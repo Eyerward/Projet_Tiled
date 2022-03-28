@@ -4,21 +4,26 @@ class Tableau1 extends Phaser.Scene {
 
     preload() {
         this.load.image('background', 'assets/images/background.png');
-        this.load.image('spike', 'assets/images/spike.png');
         // At last image must be loaded with its JSON
         this.load.atlas('player', 'assets/images/kenney_player.png','assets/images/kenney_player_atlas.json');
         this.load.image('tiles', 'assets/tilesets/platformPack_tilesheet.png');
         // Load the export Tiled JSON
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/level1.json');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/levelTry.json');
     }
 
 
     create() {
+        const backgroundImage = this.add.image(0, 0,'background').setOrigin(0, 0);
+        backgroundImage.setScale(2, 0.8);
 
+        const map = this.make.tilemap({ key: 'map' });
+        const tileset = map.addTilesetImage('project_platformer', 'tiles');
+        const platforms = map.createStaticLayer('Platforms', tileset, 0, 200);
+        platforms.setCollisionByExclusion(-1, true);
 
     }
 
-    initKeyboard()
+    /**initKeyboard()
      {
         let me = this;
 
@@ -27,20 +32,11 @@ class Tableau1 extends Phaser.Scene {
             switch (kevent.keyCode)
             {
                 case Phaser.Input.Keyboard.KeyCodes.D:
-
-                    me.warrior.x +=10;
-                    /**me.knight.body.setVelocityX(200);
-                    me.sword.body.setVelocityX(200);**/
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Q:
-                    me.warrior.x -=10;
-                    /**me.knight.body.setVelocityX(-200);
-                    me.sword.body.setVelocityX(-200);**/
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
-                    me.sword.body.setEnable(true);
-                    me.sword.setVisible(true);
-                    me.choung.play();
+                    break;
             }
         });
         this.input.keyboard.on('keyup', function(kevent)
@@ -48,15 +44,12 @@ class Tableau1 extends Phaser.Scene {
             switch (kevent.keyCode) {
                 case Phaser.Input.Keyboard.KeyCodes.D:
                 case Phaser.Input.Keyboard.KeyCodes.Q:
-                    /**me.sword.body.setVelocityX(0);
-                    me.knight.body.setVelocityX(0);**/
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
-                    me.sword.body.setEnable(false);
-                    me.sword.setVisible(false);
+                    break;
             }
         });
-    }
+    }**/
 
     disparait(obstacle){
 
