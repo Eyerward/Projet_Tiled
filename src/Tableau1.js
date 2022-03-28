@@ -91,7 +91,7 @@ class Tableau1 extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                     if (me.player.body.onFloor()) {
-                        me.player.setVelocityY(-400);
+                        me.player.setVelocityY(-1000);
                         me.player.play('jump', true);
                     }
                     break;
