@@ -63,10 +63,27 @@ class Tableau1 extends Phaser.Scene {
         });
         map.getObjectLayer('Ladder').objects.forEach((ladder) => {
             // Add new spikes to our sprite group
-            const spikeSprite = this.ladder.create(ladder.x,ladder.y + 100 - ladder.height, 'ladder').setOrigin(0);
+            const ladderSprite = this.ladder.create(ladder.x,ladder.y + 100 - ladder.height, 'ladder').setOrigin(0);
+            ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(50, 0);
         });
+        this.physics.add.collider(this.player, this.ladder, playerHit, null, this);
 
         this.initKeyboard();
+    }
+
+    playerHit(player, ladder) {
+        player.setVelocity(0, 0);
+        player.setX(50);
+        player.setY(300);
+        player.play('idle', true);
+        player.setAlpha(0);
+        let tw = this.tweens.add({
+            targets: player,
+            alpha: 1,
+            duration: 100,
+            ease: 'Linear',
+            repeat: 5,
+        });
     }
 
     initKeyboard()
@@ -78,13 +95,13 @@ class Tableau1 extends Phaser.Scene {
             switch (kevent.keyCode)
             {
                 case Phaser.Input.Keyboard.KeyCodes.D:
-                    me.player.setVelocityX(500);
+                    me.player.setVelocityX(300);
                     if (me.player.body.onFloor()) {
                         me.player.play('walk', true);
                     }
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Q:
-                    me.player.setVelocityX(-500);
+                    me.player.setVelocityX(-300);
                     if (me.player.body.onFloor()) {
                     me.player.play('walk', true);
                     }
