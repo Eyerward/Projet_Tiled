@@ -29,7 +29,7 @@ class Tableau1 extends Phaser.Scene {
         platforms.setCollisionByExclusion(-1, true);
 
         this.player = this.physics.add.sprite(50, 300, 'player');
-        this.player.setBounce(0.1);
+        //this.player.setBounce(0.1);
         this.player.setCollideWorldBounds(true);
         this.physics.add.collider(this.player, platforms);
 
@@ -57,6 +57,7 @@ class Tableau1 extends Phaser.Scene {
 
         /**GAMEOBJECTS**/
 
+        //ECHELLE
         this.ladder = this.physics.add.group({
             allowGravity: false,
             immovable: true
@@ -66,12 +67,21 @@ class Tableau1 extends Phaser.Scene {
             const ladderSprite = this.ladder.create(ladder.x,ladder.y + 100 - ladder.height, 'ladder').setOrigin(0);
             ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(50, 0);
         });
-        this.physics.add.collider(this.player, this.ladder, playerHit, null, this);
+
+
+        //this.physics.add.collider(this.player, this.ladder, this.playerHit, null, this);
+        this.physics.add.overlap(this.player,this.ladder, this.climb.bind(this), null, this);
 
         this.initKeyboard();
     }
 
-    playerHit(player, ladder) {
+    climb(player, ladder){
+        this.player.onLadder = true;
+        console.log(player.onLadder)
+    }
+
+
+    /**playerHit(player, ladder) {
         player.setVelocity(0, 0);
         player.setX(50);
         player.setY(300);
@@ -84,7 +94,7 @@ class Tableau1 extends Phaser.Scene {
             ease: 'Linear',
             repeat: 5,
         });
-    }
+    }**/
 
     initKeyboard()
      {
@@ -95,22 +105,28 @@ class Tableau1 extends Phaser.Scene {
             switch (kevent.keyCode)
             {
                 case Phaser.Input.Keyboard.KeyCodes.D:
+                    me.rightLad = true;
                     me.player.setVelocityX(300);
                     if (me.player.body.onFloor()) {
                         me.player.play('walk', true);
                     }
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Q:
+                    me.leftLad = true;
                     me.player.setVelocityX(-300);
                     if (me.player.body.onFloor()) {
                     me.player.play('walk', true);
                     }
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
+                    me.upLad = true;
                     if (me.player.body.onFloor()) {
                         me.player.setVelocityY(-1000);
                         me.player.play('jump', true);
                     }
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.S:
+                    me.downLad = true;
                     break;
             }
         });
@@ -118,13 +134,24 @@ class Tableau1 extends Phaser.Scene {
         {
             switch (kevent.keyCode) {
                 case Phaser.Input.Keyboard.KeyCodes.D:
+                    me.rightLad = false;
+                    me.player.setVelocityX(0);
+                    if (me.player.body.onFloor()) {
+                        me.player.play('idle', true);
+                    }
+                    break;
                 case Phaser.Input.Keyboard.KeyCodes.Q:
+                    me.leftLad = false;
                     me.player.setVelocityX(0);
                     if (me.player.body.onFloor()) {
                         me.player.play('idle', true);
                     }
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
+                    me.upLad = false;
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.S:
+                    me.downLad = false;
                     break;
             }
         });
@@ -139,14 +166,45 @@ class Tableau1 extends Phaser.Scene {
 
     update()
     {
-        if (this.player.body.velocity.x > 0) {
+        //CONDITIONS D'ANIMATIONS
+        if (this.player.body.velocity.x > 0)
+        {
             this.player.setFlipX(false);
-        } else if (this.player.body.velocity.x < 0) {
+        } else if (this.player.body.velocity.x < 0)
+        {
             // otherwise, make them face the other side
             this.player.setFlipX(true);
-        } else if (this.player.body.velocity.x === 0 && this.player.body.onFloor()) {
+        } else if (this.player.body.velocity.x === 0 && this.player.body.onFloor())
+        {
             this.player.play('idle', true);
         }
+        //CONDITIONS POUR GRIMPER
+        if(this.player.onLadder)
+        {
+            this.player.onLadder = false;
+            if (this.upLad)
+            {
+                this.player.setVelocityY(-300);
+                this.player.body.setAllowGravity(true);
+            }
+            else if (this.downLad)
+            {
+                this.player.setVelocityY(300);
+                this.player.body.setAllowGravity(true);
+            }
+            else {
+                this.player.setVelocityY(0);
+                this.player.body.setAllowGravity(false);
+
+            }
+
+            if (!this.player.onLadder){
+                if (this.downLad || this.upLad || this.rightLad || this.leftLad){
+                    this.player.body.setAllowGravity(true);
+                }
+            }
+        }
+
     }
 
 
