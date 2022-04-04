@@ -31,7 +31,7 @@ class Tableau1 extends Phaser.Scene {
 
         this.player = this.physics.add.sprite(50, 300, 'player');
         //this.player.setBounce(0.1);
-        this.player.setCollideWorldBounds(true);
+        this.player.setCollideWorldBounds(false);
         this.physics.add.collider(this.player, platforms);
 
         this.anims.create({
@@ -74,6 +74,7 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.overlap(this.player,this.ladder, this.climb.bind(this), null, this);
 
         //this.cameras.main.zoomTo();
+        this.cameras.main.startFollow(this.player, false, 0.05, 0.05);
 
         this.initKeyboard();
     }
