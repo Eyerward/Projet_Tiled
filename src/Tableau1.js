@@ -18,7 +18,6 @@ class Tableau1 extends Phaser.Scene {
 
     create() {
 
-        this.cameras.main.zoomTo();
 
         /**PRESETS**/
         //BG / Map / Player with anim
@@ -125,7 +124,7 @@ class Tableau1 extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                     me.upLad = true;
                     if (me.player.body.onFloor()) {
-                        me.player.setVelocityY(-1000);
+                        me.player.setVelocityY(-800);
                         me.player.play('jump', true);
                     }
                     break;
