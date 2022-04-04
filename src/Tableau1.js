@@ -18,6 +18,8 @@ class Tableau1 extends Phaser.Scene {
 
     create() {
 
+        this.cameras.main.zoomTo();
+
         /**PRESETS**/
         //BG / Map / Player with anim
         const backgroundImage = this.add.image(0, 0,'background').setOrigin(0, 0);
@@ -71,6 +73,8 @@ class Tableau1 extends Phaser.Scene {
 
         //this.physics.add.collider(this.player, this.ladder, this.playerHit, null, this);
         this.physics.add.overlap(this.player,this.ladder, this.climb.bind(this), null, this);
+
+        //this.cameras.main.zoomTo();
 
         this.initKeyboard();
     }
