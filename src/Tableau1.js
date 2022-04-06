@@ -74,14 +74,14 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.overlap(this.player,this.ladder, this.climb.bind(this), null, this);
 
         //this.cameras.main.zoomTo();
-        this.cameras.main.startFollow(this.player, false, 0.05, 0.05);
+        this.cameras.main.startFollow(this.player, false, 0.05, 0.01);
+        this.cameras.main.setRoundPixels(true);
 
         this.initKeyboard();
     }
 
     climb(player, ladder){
         this.player.onLadder = true;
-        console.log(player.onLadder)
     }
 
 
