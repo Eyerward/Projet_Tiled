@@ -1,6 +1,6 @@
 body{
     font-family: Arial, sans-serif;
-    font-size: 12px;
+    font-size: 15px;
     background-color: #000000;
     text-align: center;
 }
@@ -11,7 +11,7 @@ a {
     transition: color 1s;
 }
 #game{
-    margin-bottom: 10px;
+    margin-bottom: 1px;
     display: flex;
     justify-content: center;
     align-items: center;
