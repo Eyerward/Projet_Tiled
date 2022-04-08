@@ -32,6 +32,8 @@ class Tableau1 extends Phaser.Scene {
 
 
         this.player = this.physics.add.sprite(50, 300, 'player');
+        //Taille de la hitbox du Player
+        this.player.body.setSize(this.player.width-20, this.player.height-20).setOffset(10, 20);
         //this.player.setBounce(0.1);
         this.player.setCollideWorldBounds(true);
         //this.physics.add.collider(this.player, platforms);
