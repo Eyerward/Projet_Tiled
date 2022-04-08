@@ -27,12 +27,14 @@ class Tableau1 extends Phaser.Scene {
         const map = this.make.tilemap({ key: 'map' });
         const tileset = map.addTilesetImage('project_platformer', 'tiles');
         const platforms = map.createStaticLayer('Platforms', tileset, 0, 100);
-        platforms.setCollisionByExclusion(-1, true);
+        //platforms.setCollisionByExclusion(-1, true);
+
+
 
         this.player = this.physics.add.sprite(50, 300, 'player');
         //this.player.setBounce(0.1);
-        this.player.setCollideWorldBounds(false);
-        this.physics.add.collider(this.player, platforms);
+        this.player.setCollideWorldBounds(true);
+        //this.physics.add.collider(this.player, platforms);
 
         this.anims.create({
             key: 'walk',
@@ -56,6 +58,19 @@ class Tableau1 extends Phaser.Scene {
             frameRate: 10,
         });
 
+
+        //COLLISIONS
+        this.couille = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Couille').objects.forEach((couille) => {
+            const couilleSprite = this.physics.add.sprite(couille.x+(couille.width*0.5),couille.y + (couille.height*0.5) + 100).setSize(couille.width,couille.height);
+            this.couille.add(couilleSprite);
+        });
+
+        this.physics.add.collider(this.player, this.couille);
+
         /**GAMEOBJECTS**/
 
         //ECHELLE
@@ -74,7 +89,7 @@ class Tableau1 extends Phaser.Scene {
         this.physics.add.overlap(this.player,this.ladder, this.climb.bind(this), null, this);
 
         //this.cameras.main.zoomTo();
-        this.cameras.main.startFollow(this.player, false, 0.05, 0.01);
+        this.cameras.main.startFollow(this.player, false, 0.05, 0.03);
         this.cameras.main.setRoundPixels(true);
 
         this.initKeyboard();
@@ -188,12 +203,12 @@ class Tableau1 extends Phaser.Scene {
             this.player.onLadder = false;
             if (this.upLad)
             {
-                this.player.setVelocityY(-300);
+                this.player.setVelocityY(-400);
                 this.player.body.setAllowGravity(true);
             }
             else if (this.downLad)
             {
-                this.player.setVelocityY(300);
+                this.player.setVelocityY(400);
                 this.player.body.setAllowGravity(true);
             }
             else {
