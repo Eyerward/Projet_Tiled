@@ -60,16 +60,16 @@ class Tableau1 extends Phaser.Scene {
 
 
         //COLLISIONS
-        this.couille = this.physics.add.group({
+        this.sol = this.physics.add.group({
             allowGravity: false,
             immovable: true
         });
-        map.getObjectLayer('Couille').objects.forEach((couille) => {
-            const couilleSprite = this.physics.add.sprite(couille.x+(couille.width*0.5),couille.y + (couille.height*0.5) + 100).setSize(couille.width,couille.height);
-            this.couille.add(couilleSprite);
+        map.getObjectLayer('Sol').objects.forEach((sol) => {
+            const solSprite = this.physics.add.sprite(sol.x+(sol.width*0.5),sol.y + (sol.height*0.5) + 100).setSize(sol.width,sol.height);
+            this.sol.add(solSprite);
         });
 
-        this.physics.add.collider(this.player, this.couille);
+        this.physics.add.collider(this.player, this.sol);
 
         /**GAMEOBJECTS**/
 
@@ -185,19 +185,25 @@ class Tableau1 extends Phaser.Scene {
 
     update()
     {
-        //CONDITIONS D'ANIMATIONS
+        /**CONDITIONS D'ANIMATIONS**/
+        //Si perso bouge à droite son sprite est vers la droite
         if (this.player.body.velocity.x > 0)
         {
             this.player.setFlipX(false);
-        } else if (this.player.body.velocity.x < 0)
+        }
+
+        // Dans le cas contraire il est vers la gauche
+        else if (this.player.body.velocity.x < 0)
         {
-            // otherwise, make them face the other side
             this.player.setFlipX(true);
-        } else if (this.player.body.velocity.x === 0 && this.player.body.onFloor())
+        }
+        //S'il ne bouge pas et qu'il est au sol
+        else if (this.player.body.velocity.x === 0 && this.player.body.onFloor())
         {
             this.player.play('idle', true);
         }
-        //CONDITIONS POUR GRIMPER
+
+        /**CONDITIONS POUR GRIMPER**/
         if(this.player.onLadder)
         {
             this.player.onLadder = false;
@@ -222,6 +228,8 @@ class Tableau1 extends Phaser.Scene {
                     this.player.body.setAllowGravity(true);
                 }
             }
+
+
         }
 
     }
