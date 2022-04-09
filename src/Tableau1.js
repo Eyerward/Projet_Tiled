@@ -31,11 +31,11 @@ class Tableau1 extends Phaser.Scene {
 
 
 
-        this.player = this.physics.add.sprite(50, 300, 'player');
+        this.player = this.physics.add.sprite(100, 300, 'player');
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-20, this.player.height-20).setOffset(10, 20);
         //this.player.setBounce(0.1);
-        this.player.setCollideWorldBounds(true);
+        this.player.setCollideWorldBounds(false);
         //this.physics.add.collider(this.player, platforms);
 
         this.anims.create({
@@ -86,13 +86,34 @@ class Tableau1 extends Phaser.Scene {
             ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(50, 0);
         });
 
+        //ENNEMIS
+        this.enemy = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Enemy').objects.forEach((enemy) => {
+            const enemySprite = this.enemy.create(enemy.x, enemy.y +100 - enemy.height, 'enemy').setOrigin(0);
+            enemySprite.body.setSize(enemy.width, enemy.height).setOffset(0, 0);
+        });
+        this.physics.add.collider(this.player, this.enemy, this.playerHit, null, this);
+
+
+
+        /**COLLIDERS AND OVERLAPS FOR INTERACTIONS**/
 
         //this.physics.add.collider(this.player, this.ladder, this.playerHit, null, this);
         this.physics.add.overlap(this.player,this.ladder, this.climb.bind(this), null, this);
 
+
+        /**CAMERA POINTING AND VISUAL POLISH**/
+
+        this.camBox = this.physics.add.sprite(this.player.x, this.player.y).setSize(10,10);
+        this.camBox.body.setAllowGravity(false);
+        this.camBox.setImmovable(true);
+
         //this.cameras.main.zoomTo();
-        this.cameras.main.startFollow(this.player, false, 0.05, 0.03);
-        this.cameras.main.setRoundPixels(true);
+        this.cameras.main.startFollow(this.camBox, true, 0.05, 0.03);
+        //this.cameras.main.setRoundPixels(true);
 
         this.initKeyboard();
     }
@@ -102,7 +123,7 @@ class Tableau1 extends Phaser.Scene {
     }
 
 
-    /**playerHit(player, ladder) {
+    playerHit(player, enemy) {
         player.setVelocity(0, 0);
         player.setX(50);
         player.setY(300);
@@ -115,7 +136,7 @@ class Tableau1 extends Phaser.Scene {
             ease: 'Linear',
             repeat: 5,
         });
-    }**/
+    }
 
     initKeyboard()
      {
@@ -187,21 +208,28 @@ class Tableau1 extends Phaser.Scene {
 
     update()
     {
+
+
+        this.camBox.y = this.player.y;
+
         /**CONDITIONS D'ANIMATIONS**/
         //Si perso bouge à droite son sprite est vers la droite
         if (this.player.body.velocity.x > 0)
         {
+            this.camBox.x += 6;
             this.player.setFlipX(false);
         }
 
         // Dans le cas contraire il est vers la gauche
         else if (this.player.body.velocity.x < 0)
         {
+            this.camBox.x -= 6;
             this.player.setFlipX(true);
         }
         //S'il ne bouge pas et qu'il est au sol
         else if (this.player.body.velocity.x === 0 && this.player.body.onFloor())
         {
+            this.camBox.x = this.player.x;
             this.player.play('idle', true);
         }
 
