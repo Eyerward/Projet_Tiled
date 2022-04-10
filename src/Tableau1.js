@@ -116,6 +116,8 @@ class Tableau1 extends Phaser.Scene {
         //this.cameras.main.setRoundPixels(true);
 
         this.initKeyboard();
+        /**CREER UN OVERLAP OU UN COLLIDER QUI ACTIVE UN BOOLEEN AU CONTACT D'UNE ECHELLE ET LE DESACTIVE AU CONTACT DES PLATEFORMES**/
+
     }
 
     climb(player, ladder){
