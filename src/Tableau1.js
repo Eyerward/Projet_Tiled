@@ -31,34 +31,7 @@ class Tableau1 extends Phaser.Scene {
 
 
 
-        this.player = this.physics.add.sprite(100, 300, 'player');
-        //Taille de la hitbox du Player
-        this.player.body.setSize(this.player.width-20, this.player.height-20).setOffset(10, 20);
-        //this.player.setBounce(0.1);
-        this.player.setCollideWorldBounds(false);
-        //this.physics.add.collider(this.player, platforms);
 
-        this.anims.create({
-            key: 'walk',
-            frames: this.anims.generateFrameNames('player', {
-                prefix: 'robo_player_',
-                start: 2,
-                end: 3,
-            }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'idle',
-            frames: [{ key: 'player', frame: 'robo_player_0' }],
-            frameRate: 10,
-        });
-        this.anims.create({
-            key: 'jump',
-            frames: [{ key: 'player', frame: 'robo_player_1' }],
-            frameRate: 10,
-        });
 
 
         //COLLISIONS
@@ -71,7 +44,6 @@ class Tableau1 extends Phaser.Scene {
             this.sol.add(solSprite);
         });
 
-        this.physics.add.collider(this.player, this.sol);
 
         /**GAMEOBJECTS**/
 
@@ -83,7 +55,16 @@ class Tableau1 extends Phaser.Scene {
         map.getObjectLayer('Ladder').objects.forEach((ladder) => {
             // Add new spikes to our sprite group
             const ladderSprite = this.ladder.create(ladder.x,ladder.y + 100 - ladder.height, 'ladder').setOrigin(0);
-            ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(50, 0);
+            ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(25, 0);
+        });
+        //SORTIE D'ECHELLE
+        this.outOfLadder = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('outOfLadder').objects.forEach((outOfLadder) => {
+            const outSprite = this.physics.add.sprite(outOfLadder.x+(outOfLadder.width*0.5),outOfLadder.y + (outOfLadder.height*0.5) + 100).setSize(outOfLadder.width,outOfLadder.height);
+            this.outOfLadder.add(outSprite);
         });
 
         //ENNEMIS
@@ -95,15 +76,64 @@ class Tableau1 extends Phaser.Scene {
             const enemySprite = this.enemy.create(enemy.x, enemy.y +100 - enemy.height, 'enemy').setOrigin(0);
             enemySprite.body.setSize(enemy.width, enemy.height).setOffset(0, 0);
         });
-        this.physics.add.collider(this.player, this.enemy, this.playerHit, null, this);
 
 
+        /**********************START PLAYER**********************/
+        this.player = this.physics.add.sprite(100, 300, 'player');
+        //Taille de la hitbox du Player
+        this.player.body.setSize(this.player.width-20, this.player.height-20).setOffset(10, 20);
+        //this.player.setBounce(0.1);
+        this.player.setCollideWorldBounds(false);
+        //this.physics.add.collider(this.player, platforms);
+
+        //WALK
+        this.anims.create({
+            key: 'walk',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'robo_player_',
+                start: 2,
+                end: 3,
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+        //IDLE
+        this.anims.create({
+            key: 'idle',
+            frames: [{ key: 'player', frame: 'robo_player_0' }],
+            frameRate: 10,
+        });
+        //JUMP
+        this.anims.create({
+            key: 'jump',
+            frames: [{ key: 'player', frame: 'robo_player_1' }],
+            frameRate: 10,
+        });
+        //CLIMB
+        this.anims.create({
+            key: 'climb',
+            frames: this.anims.generateFrameNames('player', {
+                prefix: 'robo_player_',
+                start: 4,
+                end: 5,
+            }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'climbidle',
+            frames: [{ key: 'player', frame: 'robo_player_4' }],
+            frameRate: 10,
+        });
+        /**********************END PLAYER**********************/
 
         /**COLLIDERS AND OVERLAPS FOR INTERACTIONS**/
 
         //this.physics.add.collider(this.player, this.ladder, this.playerHit, null, this);
         this.physics.add.overlap(this.player,this.ladder, this.climb.bind(this), null, this);
-
+        this.physics.add.overlap(this.player,this.sol, this.notClimb.bind(this), null, this);
+        this.physics.add.collider(this.player, this.enemy, this.playerHit, null, this);
+        this.physics.add.collider(this.player, this.sol);
 
         /**CAMERA POINTING AND VISUAL POLISH**/
 
@@ -122,7 +152,12 @@ class Tableau1 extends Phaser.Scene {
 
     climb(player, ladder){
         this.player.onLadder = true;
+        this.player.climbing = true;
     }
+    notClimb(player,outOfLadder){
+        this.player.climbing = false
+    }
+
 
 
     playerHit(player, enemy) {
@@ -164,6 +199,9 @@ class Tableau1 extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                     me.upLad = true;
+                    if(me.player.climbing){
+                        me.player.play('climb',true);
+                    }
                     if (me.player.body.onFloor()) {
                         me.player.setVelocityY(-800);
                         me.player.play('jump', true);
@@ -171,6 +209,9 @@ class Tableau1 extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.S:
                     me.downLad = true;
+                    if(me.player.climbing){
+                        me.player.play('climb',true);
+                    }
                     break;
             }
         });
@@ -193,9 +234,16 @@ class Tableau1 extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                     me.upLad = false;
+                    if(me.player.climbing){
+                        me.player.play('climbidle',true);
+                    }
+
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.S:
                     me.downLad = false;
+                    if(me.player.climbing){
+                        me.player.play('climbidle',true);
+                    }
                     break;
             }
         });
