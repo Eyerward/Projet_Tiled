@@ -57,15 +57,7 @@ class Tableau1 extends Phaser.Scene {
             const ladderSprite = this.ladder.create(ladder.x,ladder.y + 100 - ladder.height, 'ladder').setOrigin(0);
             ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(25, 0);
         });
-        //SORTIE D'ECHELLE
-        this.outOfLadder = this.physics.add.group({
-            allowGravity: false,
-            immovable: true
-        });
-        map.getObjectLayer('outOfLadder').objects.forEach((outOfLadder) => {
-            const outSprite = this.physics.add.sprite(outOfLadder.x+(outOfLadder.width*0.5),outOfLadder.y + (outOfLadder.height*0.5) + 100).setSize(outOfLadder.width,outOfLadder.height);
-            this.outOfLadder.add(outSprite);
-        });
+
 
         //ENNEMIS
         this.enemy = this.physics.add.group({
@@ -199,9 +191,6 @@ class Tableau1 extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                     me.upLad = true;
-                    if(me.player.climbing){
-                        me.player.play('climb',true);
-                    }
                     if (me.player.body.onFloor()) {
                         me.player.setVelocityY(-800);
                         me.player.play('jump', true);
@@ -209,9 +198,6 @@ class Tableau1 extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.S:
                     me.downLad = true;
-                    if(me.player.climbing){
-                        me.player.play('climb',true);
-                    }
                     break;
             }
         });
@@ -234,16 +220,10 @@ class Tableau1 extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                     me.upLad = false;
-                    if(me.player.climbing){
-                        me.player.play('climbidle',true);
-                    }
 
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.S:
                     me.downLad = false;
-                    if(me.player.climbing){
-                        me.player.play('climbidle',true);
-                    }
                     break;
             }
         });
@@ -310,6 +290,16 @@ class Tableau1 extends Phaser.Scene {
             }
 
 
+        }
+
+        if(this.player.climbing){
+            if(this.player.body.velocity.y != 0){
+                this.player.play('climb',true);
+            }
+            else {
+                this.player.play('climbidle',true);
+
+            }
         }
 
     }
